@@ -19,8 +19,6 @@ class ServiceConnector private constructor(private val context: Context, private
     private var serviceBinder: IBinder? = null
     private val serviceMutex = Mutex()
     private var serviceBound = false
-    private var serviceConnectCallback: ((IBinder) -> Unit)? = null
-    private var serviceDisconnectCallback: (() -> Unit)? = null
 
     override suspend fun getService() =
             serviceMutex.withLock {
@@ -36,16 +34,7 @@ class ServiceConnector private constructor(private val context: Context, private
                 }
                 serviceConnection.disconnectService()
             }
-            serviceDisconnectCallback = null
         }
-    }
-
-    override fun onServiceDisconnect(callback: (() -> Unit)?) {
-        this.serviceDisconnectCallback = callback
-    }
-
-    override fun onServiceConnect(callback: ((IBinder) -> Unit)?) {
-        this.serviceConnectCallback = callback
     }
 
     /**
@@ -60,7 +49,6 @@ class ServiceConnector private constructor(private val context: Context, private
                 if (serviceBinder != null) {
                     this@ServiceConnector.serviceBinder = serviceBinder
                     serviceConnectionDeferred.complete(serviceBinder)
-                    serviceConnectCallback?.invoke(serviceBinder)
                 } else {
                     serviceConnectionDeferred.completeExceptionally(RuntimeException("No binder returned from service $serviceIntent"))
                 }
@@ -68,11 +56,8 @@ class ServiceConnector private constructor(private val context: Context, private
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
-            context.unbindService(this)
-            Log.v(tag, "onServiceDisconnected")
             this@ServiceConnector.launch {
                 disconnectService()
-                serviceDisconnectCallback?.invoke()
             }
         }
 

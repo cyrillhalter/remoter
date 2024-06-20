@@ -53,8 +53,6 @@ internal class KClassBuilder(element: Element, bindingManager: KBindingManager) 
                         .initializer("remoteBinder")
                         .build())
 
-        bindingManager.getFieldBuilder(remoterInterfaceElement).addProxyFields(proxyBuilder)
-
 
         if (bindingManager.hasRemoterBuilder()) {
             proxyBuilder.addFunction(FunSpec.constructorBuilder().addParameter(ParameterSpec.builder("serviceConnector",
@@ -62,11 +60,9 @@ internal class KClassBuilder(element: Element, bindingManager: KBindingManager) 
                     .build())
                     .addKdoc("Initialize this with a [remoter.builder.IServiceConnector] that connects to service using suspend connect")
                     .addStatement("this._remoterServiceConnector = serviceConnector")
-                    .beginControlFlow("serviceConnector.onServiceDisconnect")
-                    .addStatement("_serviceInitComplete = kotlinx.coroutines.CompletableDeferred<Boolean>()")
-                    .endControlFlow()
-                    .beginControlFlow("serviceConnector.onServiceConnect")
-                    .addStatement("__initServiceConnection()")
+                    .beginControlFlow("_proxyScope.%M", MemberName("kotlinx.coroutines", "launch"))
+                    .addStatement("_binderID = __remoter_getStubID_sus()")
+                    .addStatement("_stubProcess = __remoter_getStubProcessID_sus()")
                     .endControlFlow()
                     .callThisConstructor("null")
                     .build())
@@ -86,16 +82,6 @@ internal class KClassBuilder(element: Element, bindingManager: KBindingManager) 
                     .callThisConstructor("ServiceConnector.of(context, explicitServiceIntent)")
                     .build())
 
-            proxyBuilder.addFunction(FunSpec.builder("__initServiceConnection")
-                    .addModifiers(KModifier.PRIVATE)
-                    .beginControlFlow("_proxyScope.%M", MemberName("kotlinx.coroutines", "launch"))
-                    .addStatement("_binderID = __remoter_getStubID_sus()")
-                    .addStatement("_stubProcess = __remoter_getStubProcessID_sus()")
-                    .addStatement("_serviceInitComplete.complete(true)")
-                    .endControlFlow()
-                    .build()
-            )
-
         }
 
         for (typeParameterElement in (remoterInterfaceElement as TypeElement).typeParameters) {
@@ -104,6 +90,7 @@ internal class KClassBuilder(element: Element, bindingManager: KBindingManager) 
 
         proxyBuilder.addType(buildDeathRecepient())
 
+        bindingManager.getFieldBuilder(remoterInterfaceElement).addProxyFields(proxyBuilder)
         bindingManager.getFunctiondBuilder(remoterInterfaceElement).addProxyMethods(proxyBuilder)
 
         fileSpecBuilder.addType(proxyBuilder.build())

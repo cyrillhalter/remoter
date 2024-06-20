@@ -9,7 +9,6 @@ import android.os.RemoteException;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -81,7 +80,6 @@ public class AIDLClientToRemoterServerTest {
         }
     }
 
-    @After
     public void teardown() {
         mActivityRule.getActivity().unbindService(serviceConnection);
     }

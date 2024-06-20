@@ -19,12 +19,6 @@ public class SampleService extends Service {
 
     private static final String TAG = SampleService.class.getSimpleName();
     private ISampleService serviceImpl = new SampleServiceImpl();
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ISampleService_Stub.setStubProxyCheck(intent.getBooleanExtra("enable", true));
-        }
-    };
 
     public SampleService() {
     }
@@ -35,13 +29,12 @@ public class SampleService extends Service {
         Log.v(TAG, "Service Create");
 
         //For testing with aidl clients, turn check off
-        registerReceiver(receiver, new IntentFilter("remoter.test.ProxyStubCheck"));
-    }
-
-    @Override
-    public void onDestroy() {
-        unregisterReceiver(receiver);
-        super.onDestroy();
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                ISampleService_Stub.setStubProxyCheck(intent.getBooleanExtra("enable", true));
+            }
+        }, new IntentFilter("remoter.test.ProxyStubCheck"));
     }
 
     @Override

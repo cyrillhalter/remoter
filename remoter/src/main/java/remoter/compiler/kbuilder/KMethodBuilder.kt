@@ -569,9 +569,6 @@ class KMethodBuilder(remoterInterfaceElement: Element, bindingManager: KBindingM
                 .endControlFlow()
                 .addStatement("stubMap.clear()")
                 .endControlFlow()
-        if (bindingManager.hasRemoterBuilder()) {
-            methodBuilder.addStatement("_remoterServiceConnector?.disconnect()")
-        }
         classBuilder.addFunction(methodBuilder.build())
 
 
@@ -733,17 +730,10 @@ class KMethodBuilder(remoterInterfaceElement: Element, bindingManager: KBindingM
             val methodBuilder = FunSpec.builder("_getRemoteServiceBinderSuspended")
                     .addModifiers(KModifier.PRIVATE)
                     .addModifiers(KModifier.SUSPEND)
-                    .addParameter(ParameterSpec.builder("waitForInit", Boolean::class)
-                        .defaultValue("true")
-                        .build())
                     .returns(ClassName("android.os", "IBinder"))
                     .addStatement("val sConnector = _remoterServiceConnector")
                     .beginControlFlow("return if (sConnector != null)")
-                    .addStatement("val rBinder = sConnector.getService()")
-                    .beginControlFlow("if (waitForInit)")
-                    .addStatement("_serviceInitComplete.await()")
-                    .endControlFlow()
-                    .addStatement("rBinder")
+                    .addStatement("sConnector.getService()")
                     .endControlFlow()
                     .beginControlFlow("else")
                     .addStatement("remoteBinder?: throw %T(\"No remote binder or IServiceConnector set\")", RuntimeException::class)
@@ -754,9 +744,6 @@ class KMethodBuilder(remoterInterfaceElement: Element, bindingManager: KBindingM
         val methodBuilderNonSuspended = FunSpec.builder("_getRemoteServiceBinder")
                 .addModifiers(KModifier.PRIVATE)
                 .returns(ClassName("android.os", "IBinder"))
-            .addParameter(ParameterSpec.builder("waitForInit", Boolean::class)
-                .defaultValue("true")
-                .build())
         if (bindingManager.hasRemoterBuilder()) {
             methodBuilderNonSuspended.beginControlFlow("val result = if (remoteBinder != null)")
                     .addStatement("remoteBinder")
@@ -769,15 +756,9 @@ class KMethodBuilder(remoterInterfaceElement: Element, bindingManager: KBindingM
                     .beginControlFlow("else ")
                     .addStatement("remoteBinder")
                     .endControlFlow()
-                    .beginControlFlow("if (remoteBinder == null && waitForInit)")
-                    .addStatement("kotlinx.coroutines.runBlocking { _serviceInitComplete.await() }")
-                    .endControlFlow()
                     .addStatement("return result?: throw %T(\"No remote binder or IServiceConnectot set\")", RuntimeException::class)
         } else {
             methodBuilderNonSuspended.addStatement("val result = remoteBinder")
-                .beginControlFlow("if (waitForInit)")
-                .addStatement("kotlinx.coroutines.runBlocking { _serviceInitComplete.await() }")
-                .endControlFlow()
             methodBuilderNonSuspended.addStatement("return result?: throw %T(\"No remote binder or IServiceConnectot set\")", RuntimeException::class)
         }
 
@@ -791,11 +772,11 @@ class KMethodBuilder(remoterInterfaceElement: Element, bindingManager: KBindingM
      * Add proxy method to get unique id
      */
     private fun addGetId(classBuilder: TypeSpec.Builder) {
-        addGetIdMethod(classBuilder, "__remoter_getStubID", "TRANSACTION__getStubID", "_getRemoteServiceBinder(false)")
-        addGetIdMethod(classBuilder, "__remoter_getStubProcessID", "TRANSACTION__getStubProcessID", "_getRemoteServiceBinder(false)")
+        addGetIdMethod(classBuilder, "__remoter_getStubID", "TRANSACTION__getStubID", "_getRemoteServiceBinder()")
+        addGetIdMethod(classBuilder, "__remoter_getStubProcessID", "TRANSACTION__getStubProcessID", "_getRemoteServiceBinder()")
         if (bindingManager.hasRemoterBuilder()) {
-            addGetIdMethod(classBuilder, "__remoter_getStubID_sus", "TRANSACTION__getStubID", "_getRemoteServiceBinderSuspended(false)", true)
-            addGetIdMethod(classBuilder, "__remoter_getStubProcessID_sus", "TRANSACTION__getStubProcessID", "_getRemoteServiceBinderSuspended(false)", true)
+            addGetIdMethod(classBuilder, "__remoter_getStubID_sus", "TRANSACTION__getStubID", "_getRemoteServiceBinderSuspended()", true)
+            addGetIdMethod(classBuilder, "__remoter_getStubProcessID_sus", "TRANSACTION__getStubProcessID", "_getRemoteServiceBinderSuspended()", true)
         }
     }
 
