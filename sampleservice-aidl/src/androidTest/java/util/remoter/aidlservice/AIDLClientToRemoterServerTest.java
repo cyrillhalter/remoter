@@ -295,10 +295,9 @@ public class AIDLClientToRemoterServerTest {
         Assert.assertEquals(3, result.size());
         Assert.assertEquals(100, result.get("Result"));
 
-        //Android aidl inout for maps no more properly filling out map
-        //Assert.assertEquals(4, inOutList.size());
-        //Assert.assertEquals(1, inOutList.get(1));
-        //Assert.assertEquals(2, inOutList.get(2));
+        Assert.assertEquals(4, inOutList.size());
+        Assert.assertEquals(1, inOutList.get(1));
+        Assert.assertEquals(2, inOutList.get(2));
     }
 
     @Test

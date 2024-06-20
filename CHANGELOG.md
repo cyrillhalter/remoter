@@ -1,18 +1,6 @@
 Change Log
 ==========
 
-
-Version 2.0.5 *(2023-05-15)*
-----------------------------
-Option to specify flags in ServiceConnector and auto generated Proxy constructors for kotlin
-
-
-Version 2.0.3 *(2021-09-16)*
-----------------------------
-Handling service disconnections from ServiceConnector
-Added more sample and tests
-
-
 Version 2.0.3 *(2021-09-16)*
 ----------------------------
 Handling service disconnections from ServiceConnector

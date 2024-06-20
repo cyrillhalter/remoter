@@ -139,8 +139,7 @@ public class SampleServiceImpl implements ISampleService {
     @Override
     public Map testMap(Map inMap, Map inOutMap) {
 
-        Log.v(TAG, "inMap" + inMap);
-        Log.v(TAG, "inOutMap" + inOutMap);
+        //inOutMap.clear();
         inOutMap.putAll(inMap);
 
         Map result = new HashMap();
