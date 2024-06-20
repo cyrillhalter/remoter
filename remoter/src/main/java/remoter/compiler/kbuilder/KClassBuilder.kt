@@ -43,6 +43,7 @@ internal class KClassBuilder(element: Element, bindingManager: KBindingManager) 
                 .primaryConstructor(FunSpec.constructorBuilder()
                         .addParameter(ParameterSpec.builder("remoteBinder",
                                 ClassName("android.os", "IBinder").copy(true))
+                                .addModifiers(KModifier.PRIVATE)
                                 .build()).build())
 
                 .addProperty(PropertySpec.builder("remoteBinder", ClassName("android.os", "IBinder")
@@ -147,6 +148,7 @@ internal class KClassBuilder(element: Element, bindingManager: KBindingManager) 
 
         stubClassBuilder.primaryConstructor(FunSpec.constructorBuilder()
                 .addParameter(ParameterSpec.builder("serviceImpl", remoterInterfaceElement.asType().asTypeName().copy(true))
+                        .addModifiers(KModifier.PRIVATE)
                         .build())
                 .build())
 
@@ -180,6 +182,7 @@ internal class KClassBuilder(element: Element, bindingManager: KBindingManager) 
                     .primaryConstructor(FunSpec.constructorBuilder()
                             .addParameter(ParameterSpec.builder("proxyListener", RemoterProxyListener::class.asTypeName()
                                     .copy(nullable = true))
+                                    .addModifiers(KModifier.PRIVATE)
                                     .build()).build())
 
                     .addProperty(PropertySpec.builder("proxyListener", RemoterProxyListener::class.asTypeName().copy(nullable = true),
@@ -215,6 +218,7 @@ internal class KClassBuilder(element: Element, bindingManager: KBindingManager) 
                                     .build())
                     .primaryConstructor(FunSpec.constructorBuilder()
                             .addParameter(ParameterSpec.builder("binder", ClassName("android.os", "IBinder").copy(true))
+                                    .addModifiers(KModifier.PUBLIC)
                                     .build()).build())
                     .addFunction(FunSpec.builder("asBinder")
                             .addModifiers(KModifier.PUBLIC)

@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk 34
+    compileSdkVersion 26
 
     defaultConfig {
         applicationId "util.remoter.remoterservice"
@@ -19,11 +19,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    namespace 'util.remoter.remoterservice'
-    lint {
-        baseline = file("lint-baseline.xml")
-    }
-
 }
 
 dependencies {
@@ -35,7 +30,7 @@ dependencies {
 
 
 //After release
-//    api project(':remoter-annotations')
+//    api "com.josesamuel:remoter-annotations:$VERSION_NAME"
 //    annotationProcessor "com.josesamuel:remoter:$VERSION_NAME"
 
 //During development

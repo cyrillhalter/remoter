@@ -98,8 +98,7 @@ class MethodBuilder extends RemoteBuilder {
             if (genericParceler != null) {
                 methodBuilder.addStatement("$T<$T> result", List.class, genericParceler);
             } else {
-                TypeName typeName = TypeName.get(executableElement.getReturnType());
-                methodBuilder.addStatement("$T result", typeName.withoutAnnotations());
+                methodBuilder.addStatement(executableElement.getReturnType().toString() + " result");
             }
         }
 

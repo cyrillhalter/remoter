@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk 34
+    compileSdkVersion 26
 
     defaultConfig {
         applicationId "util.remoter.aidlservice"
@@ -20,19 +20,9 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
-    namespace 'util.remoter.aidlservice'
-
-    lint {
-        baseline = file("lint-baseline.xml")
-    }
-
-    buildFeatures {
-        aidl true
-    }
-
 }
 
 dependencies {

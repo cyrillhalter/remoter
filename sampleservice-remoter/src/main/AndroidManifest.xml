@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="util.remoter.remoterservice">
 
     <application
         android:allowBackup="true"
@@ -19,8 +20,7 @@
         </service>
 
         <activity
-            android:name=".TestActivity"
-            android:exported="true">
+            android:name=".TestActivity">
             <intent-filter>
                 <action android:name="util.remoter.remoterservice.TestActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
