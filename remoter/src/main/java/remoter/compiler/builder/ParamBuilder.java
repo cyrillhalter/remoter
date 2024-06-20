@@ -1,6 +1,7 @@
 package remoter.compiler.builder;
 
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeName;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
@@ -39,7 +40,7 @@ abstract class ParamBuilder extends RemoteBuilder {
      * Called to generate code to write params for stub
      */
     public void writeParamsToStub(VariableElement param, ParamType paramType, String paramName, MethodSpec.Builder methodBuilder) {
-        methodBuilder.addStatement("$T " + paramName, param.asType());
+        methodBuilder.addStatement("$T " + paramName, TypeName.get(param.asType()).withoutAnnotations());
     }
 
     /**
@@ -52,8 +53,7 @@ abstract class ParamBuilder extends RemoteBuilder {
             methodBuilder.addStatement(paramName + " = null");
             methodBuilder.endControlFlow();
             methodBuilder.beginControlFlow("else");
-            methodBuilder.addStatement(paramName + " = new " + (((ArrayType) param.asType()).getComponentType().toString())
-                    + "[" + paramName + "_length]");
+            methodBuilder.addStatement(paramName + " = new $T[" + paramName + "_length]", TypeName.get(((ArrayType) param.asType()).getComponentType()).withoutAnnotations());
             methodBuilder.endControlFlow();
         }
     }

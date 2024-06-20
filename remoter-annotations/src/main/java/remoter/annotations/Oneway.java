@@ -10,7 +10,7 @@ import static java.lang.annotation.RetentionPolicy.CLASS;
  * Marks a method call as asynchronous one way call
  * <p>
  * Only applies to methods with void return, and will be ignored for others.
- * <p>
+ * </p>
  *
  * @see Remoter
  * @see ParamOut

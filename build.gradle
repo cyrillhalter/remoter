@@ -1,12 +1,13 @@
 
 
 buildscript {
-    ext.kotlin_version = '1.8.21'
+    ext.kotlin_version = '1.9.24'
+    ext.groupName = 'com.github.cyrillhalter'
     ext.versions = [
             'minSdk'    : 9,
             'compileSdk': 28,
             'release'   : '${VERSION_NAME}',
-            'androidPlugin': '7.0.0',
+            'androidPlugin': '8.3.2',
             'supportLibrary': '26.0.1'
     ]
 
@@ -50,9 +51,17 @@ plugins {
     id("org.jetbrains.dokka") version "1.8.10"
 }
 
+def versionName() {
+
+    if (!hasProperty("version")) {
+        // don't care
+        return "dummy"
+    }
+
+    return property("version")
+}
+
 subprojects { project ->
-    group = GROUP
-    version = VERSION_NAME
 
     repositories {
         jcenter()
@@ -62,6 +71,11 @@ subprojects { project ->
             url "https://plugins.gradle.org/m2/"
         }
     }
+}
+
+allprojects {
+    version = versionName()
+    group = groupName
 }
 
 task clean(type: Delete) {
